@@ -1,0 +1,25 @@
+{
+  "name": "mitsuki-bot",
+  "version": "1.0.0",
+  "main": "./src/app.ts",
+  "author": "gylove1994",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development && nodemon ./src/app.ts",
+    "run": "cross-env NODE_ENV=production && node ./dist/app.js",
+    "build": "cross-env NODE_ENV=production && tsc "
+  },
+  "config": {},
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "mirai-ts": "^2.2.1",
+    "sqlite": "^4.0.23",
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/sqlite3": "^3.1.8",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
+  }
+}
