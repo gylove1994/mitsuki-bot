@@ -1,0 +1,23 @@
+{
+    "apiSetting":{
+        "adapters": ["http", "ws"],
+        "enableVerify": false,
+        "verifyKey": "xxxxxxxxxxxxx",
+        "debug": true,
+        "singleMode": true,
+        "cacheSize": 4096,
+        "adapterSettings": {
+            "http": {
+                "port": 8080,
+                "host": "localhost",
+                "cors": ["*"]
+            },
+            "ws": {
+                "port": 8080,
+                "host": "localhost"
+            }
+        }
+    },
+    "qq_link":123456,
+    "dbPath":"mitsuki.db"
+}
