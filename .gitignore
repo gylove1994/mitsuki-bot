@@ -1,3 +1,4 @@
 node_modules
 src/config
 .DS_Store
+mitsuki.db
