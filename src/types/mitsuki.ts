@@ -20,6 +20,7 @@ export class Mitsuki extends Mirai{
             super(mitsukiSetting.apiSetting)
             this.logger = new Logger({prefix:"Mitsuki"})
             this.setting = mitsukiSetting;
+            this.DevMode(process.env.NODE_ENV as string)
         }else throw new Error("配置文件不存在")
     }
     async linkDB(){
@@ -42,5 +43,10 @@ export class Mitsuki extends Mirai{
             this.dev_mode = true
         else
             this.dev_mode = false
+    }
+    static async setup(mitsukiSettingPath:string) {
+        const mitsuki = new Mitsuki(mitsukiSettingPath)
+        await mitsuki.linkDB()
+        return mitsuki
     }
 }
