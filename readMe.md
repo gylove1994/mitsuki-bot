@@ -14,7 +14,7 @@ Mitsuki-bot是基于[mirai](https://github.com/mamoe/mirai)及[mirai-ts](https:/
 
 <img src="https://s2.loli.net/2022/01/20/Znt1kYWbHPT6i5l.png" alt="mmcm" style="zoom:50%;" />
 
-受mvc及洋葱圈模型的启发，个人认为QQ机器人对于消息应答的一个完整的处理流程如下：
+受mvc的启发，个人认为QQ机器人对于消息应答的一个完整的处理流程如下：
 
 - 首先，所收到的原始消息经过一个或者数个中间件处理后，根据处理的结果传入到对应的控制器中；
 - 其次，由对应的控制器处理对应的事件。其中若需要有关数据库操作及调用其他api时，请将这部分内容交由对应的业务模型完成。
