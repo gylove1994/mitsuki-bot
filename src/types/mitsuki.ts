@@ -1,8 +1,8 @@
-import { Controller } from './controller';
-import Mirai, { EventType, Logger, MessageType, MiraiApiHttpSetting } from "mirai-ts";
+import Mirai, { Logger, MiraiApiHttpSetting } from "mirai-ts";
+import fs from 'node:fs';
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
-import fs from 'node:fs';
+import { Controller, MsgType } from './controller';
 
 export interface MitsukiSetting {
     apiSetting: MiraiApiHttpSetting
@@ -11,7 +11,7 @@ export interface MitsukiSetting {
 }
 
 export class Mitsuki extends Mirai {
-    controller:Controller<"message" | EventType.EventType | MessageType.ChatMessageType>[]
+    controller: Controller<MsgType>[]
     dev_mode?: boolean
     db?: Database
     logger: Logger
@@ -48,7 +48,7 @@ export class Mitsuki extends Mirai {
         else
             this.dev_mode = false
     }
-    public addController(msgType:"message" | EventType.EventType | MessageType.ChatMessageType){
+    public addController(msgType: MsgType) {
         const controller = new Controller(msgType)
         this.controller.push(controller)
         return controller
