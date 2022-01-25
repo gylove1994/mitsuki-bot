@@ -2,6 +2,7 @@ import Mirai, { Logger, MiraiApiHttpSetting } from "mirai-ts";
 import fs from 'node:fs';
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
+import { Commands } from "./command";
 import { Controller, MsgType } from './controller';
 
 export interface MitsukiSetting {
@@ -52,6 +53,9 @@ export class Mitsuki extends Mirai {
         const controller = new Controller(msgType)
         this.controller.push(controller)
         return controller
+    }
+    public getCommand(){
+        return new Commands()
     }
     static async setup(mitsukiSettingPath: string) {
         const mitsuki = new Mitsuki(mitsukiSettingPath)

@@ -1,12 +1,12 @@
-import { Mitsuki } from './types/mitsuki'
-import { permissions,Permission } from './middleware/permissions'
 import path from 'path'
+import { friendMsg } from './controller/friendMsg'
+import { Permission, permissions } from './middleware/permissions'
+import { splitText } from './middleware/spiltText'
+import { Mitsuki } from './types/mitsuki'
 
 async function app() {
     const mitsuki = await Mitsuki.setup(path.join(__dirname,"./config/mitsukiSetting.json"))
-    mitsuki.addController("FriendMessage").addMiddleware(permissions).setMainProcess((context)=>{
-        mitsuki.logger.info(context.getMiddlewareOutput<Permission>("permissions").permissions)
-    })
+    mitsuki.addController("FriendMessage").addMiddleware(permissions,splitText).setMainProcess(friendMsg)
     mitsuki.ready()
 }
 

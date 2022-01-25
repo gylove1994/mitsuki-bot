@@ -2,10 +2,14 @@ import { EventType, MessageType } from 'mirai-ts';
 import { Mitsuki } from './mitsuki';
 
 export type MsgType = "message" | EventType.EventType | MessageType.ChatMessageType
-export type Middleware<T extends MsgType> = (msg: Data<T>) => MiddlewareOutput
-export interface MiddlewareOutput{
-    middlewareName:string,
-    output:Object
+export type Middleware<T extends MsgType> = (msg: Data<T>,mitsuki:Mitsuki) => MiddlewareOutput
+export class MiddlewareOutput{
+    public middlewareName:string
+    public output:Object
+    constructor(middlewareName:string,output:Object){
+        this.middlewareName = middlewareName
+        this.output = output
+    }
 }
 
 export class Context<T extends MsgType>{
@@ -18,7 +22,7 @@ export class Context<T extends MsgType>{
     public getMiddlewareOutput<K>(middlewareName:string) {
         let output:Object| undefined = undefined;
         this.output.forEach(element => {
-            if(element.middlewareName === middlewareName)
+            if(element.middlewareName == middlewareName)
                 output = element.output
         });
         if(output === undefined)
@@ -27,7 +31,7 @@ export class Context<T extends MsgType>{
     }
 }
 
-export type MainProcess<T extends MsgType> = (context:Context<T>) => void
+export type MainProcess<T extends MsgType> = (context:Context<T>,mitsuki:Mitsuki) => void
 
 export type Data<T extends MsgType> = T extends EventType.EventType
     ? EventType.EventMap[T]
@@ -64,12 +68,13 @@ export class Controller<T extends MsgType>{
         if (this.mainProcess !== undefined) {
             mitsuki.logger.info(this.eventType + "控制器已设置")
             mitsuki.on(this.eventType, async (msg) => {
+                mitsuki.logger.info(this.eventType + "事件应答开始")
                 const start = Date.now()
                 let context = new Context<T>(msg)
                 this.middleware.forEach(async fn => {
-                    context.output.push(await fn(msg))
+                    context.output.push(fn(msg,mitsuki))
                 });
-                await this.mainProcess!(context)
+                await this.mainProcess!(context,mitsuki)
                 let time = Date.now() - start;
                 if(time == 0)
                     mitsuki.logger.info(this.eventType + "事件应答完毕，用时：小于1毫秒。")

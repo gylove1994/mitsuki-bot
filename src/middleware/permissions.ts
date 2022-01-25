@@ -1,3 +1,4 @@
+import { Mitsuki } from './../types/mitsuki';
 import fs from 'node:fs';
 import { Data, MsgType, MiddlewareOutput } from './../types/controller';
 import path from 'path'
@@ -7,7 +8,7 @@ interface permissionList {
     block: number[]
 }
 export type Permission = {permissions:string}
-export function permissions<T extends MsgType>(msg: Data<T>): MiddlewareOutput {
+export function permissions<T extends MsgType>(msg: Data<T>,mitsuki:Mitsuki): MiddlewareOutput {
     let list: permissionList;
     if (fs.existsSync(path.join(__dirname, "../config/permissions.json")))
         list = JSON.parse(fs.readFileSync(path.join(__dirname, "../config/permissions.json"), "utf-8"))
@@ -27,5 +28,6 @@ export function permissions<T extends MsgType>(msg: Data<T>): MiddlewareOutput {
         }
         return {middlewareName:"permissions",output:{permissions:"user"}} as MiddlewareOutput
     }
+    //todo
     return {middlewareName:"permissions",output:{permissions:"notHandle"}} as MiddlewareOutput
 }
