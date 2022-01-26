@@ -32,12 +32,18 @@ class Commands {
         this.defaultCommand = new SingleCommand("default")
         return this.defaultCommand
     }
-    public async doCommand(com: string, options?: string[]) {
+    public async doCommand(com: string | undefined, options?: string[]) {
+        if(com === undefined){
+            if(this.defaultCommand !== undefined){
+                this.defaultCommand.doAction()
+                return
+            }
+            return
+        }
         for (let i = 0; i < this.commands.length; i++) {
             if (await this.commands[i].checkCommand(com, options)) return;
-            if(this.defaultCommand !== undefined)
-                this.defaultCommand.doAction()
         }
+        if(this.defaultCommand !== undefined) this.defaultCommand.doAction()
     }   
 }
 
