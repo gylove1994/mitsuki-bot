@@ -11,13 +11,23 @@ export interface MitsukiSetting {
     dbPath?: string
 }
 
+export interface Environment{
+    name:string
+    value:object
+}
+
+export interface EnvironmentSet{
+    env:Environment[]
+}
+
 export class Mitsuki extends Mirai {
     controller: Controller<MsgType>[]
     dev_mode?: boolean
     db?: Database
     logger: Logger
+    env:EnvironmentSet
     readonly setting: MitsukiSetting
-    constructor(mitsukiSettingPath: string) {
+    constructor(mitsukiSettingPath: string,envPath?:string) {
         if (fs.existsSync(mitsukiSettingPath)) {
             const mitsukiSetting: MitsukiSetting = JSON.parse(fs.readFileSync(mitsukiSettingPath, "utf-8"))
             super(mitsukiSetting.apiSetting)
@@ -26,6 +36,12 @@ export class Mitsuki extends Mirai {
             this.DevMode(process.env.NODE_ENV as string)
             this.controller = []
         } else throw new Error("配置文件不存在")
+        if(envPath !== undefined && fs.existsSync(envPath)){
+            this.env = JSON.parse(fs.readFileSync(envPath, "utf-8"))
+        }else{
+            this.logger.info("默认env设置文件不存在，已将env设置为空数组")
+            this.env = {env:[]}
+        }
     }
     async linkDB() {
         if (this.setting.dbPath != undefined) {
@@ -57,9 +73,30 @@ export class Mitsuki extends Mirai {
     public getCommand(){
         return new Commands()
     }
-    static async setup(mitsukiSettingPath: string) {
-        const mitsuki = new Mitsuki(mitsukiSettingPath)
+    static async setup(mitsukiSettingPath: string,envPath?:string) {
+        const mitsuki = new Mitsuki(mitsukiSettingPath,envPath)
         await mitsuki.linkDB()
         return mitsuki
+    }
+    public getEnvValue<T>(envName:string) {
+        let env:Object| undefined = undefined;
+        this.env.env.forEach(element => {
+            if(element.name == envName)
+                env = element.value
+        });
+        if(env === undefined)
+            throw new Error("mitsuki中没有"+envName+"环境变量");
+        return env as T
+    }
+    public setEnvValue(envName:string,envValue:object) {
+        let status = false
+        this.env.env.forEach(element => {
+            if(element.name == envName){
+                element.value = envValue
+                status = true
+            }
+        });
+        if(status === false)
+            throw new Error("mitsuki中没有"+envName+"环境变量");
     }
 }
