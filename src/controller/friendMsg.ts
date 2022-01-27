@@ -22,6 +22,7 @@ export async function friendMsg<T extends MsgType>(context:Context<T>,mitsuki:Mi
                     let command = mitsuki.getCommand()
                     command.addCommand("-on").addAction(()=>{mitsuki.setEnvValue("switch",<Switch>{status:true});context.msg.reply!("mitsuki-bot已启用消息接管了哦0.0")})
                     command.addCommand("-off").addAction(()=>{mitsuki.setEnvValue("switch",<Switch>{status:false});context.msg.reply!("mitsuki-bot已关闭消息接管了哦0.0")})
+                    command.addCommand("-status").addAction(()=>{context.msg.reply!("mitsuki-bot目前的开启状态为："+mitsuki.getEnvValue<Switch>("switch").status)})
                     command.doCommand(context.getMiddlewareOutput<SplitText>("splitText").str[1],context.getMiddlewareOutput<Permission>("permissions").permissionLv)
                     mitsuki.logger.success("admin命令被触发")
                 })
