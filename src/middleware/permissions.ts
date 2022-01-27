@@ -7,7 +7,13 @@ interface permissionList {
     ec: number[],
     block: number[]
 }
-export type Permission = {permissions:string}
+export enum PermissionSet{
+    block = -1,
+    user,
+    ec,
+    admin
+}
+export type Permission = {permissions:string,permissionLv:number}
 export function permissions<T extends MsgType>(msg: Data<T>,mitsuki:Mitsuki): MiddlewareOutput {
     let list: permissionList;
     if (fs.existsSync(path.join(__dirname, "../config/permissions.json")))
@@ -16,18 +22,18 @@ export function permissions<T extends MsgType>(msg: Data<T>,mitsuki:Mitsuki): Mi
     if (msg.type == "FriendMessage"){
         for(let i = 0 ; i<list.admin.length ; i++){
             if(list.admin[i] == msg.sender.id)
-            return {middlewareName:"permissions",output:{permissions:"admin"}} as MiddlewareOutput
+            return {middlewareName:"permissions",output:{permissions:"admin",permissionLv:PermissionSet.admin}} as MiddlewareOutput
         }
         for(let i = 0 ; i<list.ec.length ; i++){
             if(list.admin[i] == msg.sender.id)
-            return {middlewareName:"permissions",output:{permissions:"ec"}} as MiddlewareOutput
+            return {middlewareName:"permissions",output:{permissions:"ec",permissionLv:PermissionSet.ec}} as MiddlewareOutput
         }
         for(let i = 0 ; i<list.block.length ; i++){
             if(list.admin[i] == msg.sender.id)
-            return {middlewareName:"permissions",output:{permissions:"block"}} as MiddlewareOutput
+            return {middlewareName:"permissions",output:{permissions:"block",permissionLv:PermissionSet.block}} as MiddlewareOutput
         }
-        return {middlewareName:"permissions",output:{permissions:"user"}} as MiddlewareOutput
+        return {middlewareName:"permissions",output:{permissions:"user",permissionLv:PermissionSet.user}} as MiddlewareOutput
     }
     //todo
-    return {middlewareName:"permissions",output:{permissions:"notHandle"}} as MiddlewareOutput
+    return {middlewareName:"permissions",output:{permissions:"notHandle",permissionLv:-1}} as MiddlewareOutput
 }
