@@ -1,3 +1,4 @@
+import { Permission } from './../middleware/permissions';
 class Commands {
     private commands: SingleCommand[];
     private defaultCommand?:SingleCommand;
@@ -32,7 +33,7 @@ class Commands {
         this.defaultCommand = new SingleCommand("default")
         return this.defaultCommand
     }
-    public async doCommand(com: string | undefined, options?: string[]) {
+    public async doCommand(com?: string,permissionLv?:number, options?: string[]) {
         if(com === undefined){
             if(this.defaultCommand !== undefined){
                 this.defaultCommand.doAction()
@@ -41,7 +42,7 @@ class Commands {
             return
         }
         for (let i = 0; i < this.commands.length; i++) {
-            if (await this.commands[i].checkCommand(com, options)) return;
+            if (await this.commands[i].checkCommand(com,permissionLv, options)) return
         }
         if(this.defaultCommand !== undefined) this.defaultCommand.doAction()
     }   
@@ -50,6 +51,7 @@ class Commands {
 class SingleCommand {
     private command?: string;
     private action?: (options?: string[]) => void;
+    private permissionLv?:number
     constructor(command?: string) {
         if (command != undefined)
             this.command = command;
@@ -63,10 +65,22 @@ class SingleCommand {
         else
             throw new Error("未定义命令所调用的函数！");
     };
-    public async checkCommand(command: string, options?: string[]) {
-        if (command == this.command) {
-            await this.doAction(options);
-            return true;
+    public async checkCommand(command: string,permissionLv?:number,options?: string[]) {
+        if (command == this.command ) {
+            if(permissionLv !== undefined && this.permissionLv !== undefined){
+                if(this.permissionLv >= permissionLv){
+                    await this.doAction(options);
+                    return true;
+                }else return false;
+            }else if(this.permissionLv !== undefined && permissionLv == undefined){
+                throw new Error("对于设置了权限的命令"+this.getCommand+"却未传入权限参数")
+            }
+            else if(permissionLv !== undefined && permissionLv < 0){
+                return false;
+            }else if(this.permissionLv == undefined){
+                await this.doAction(options);
+                return true;
+            }
         } else {
             return false;
         }
@@ -75,6 +89,10 @@ class SingleCommand {
         if(this.command == undefined)
             throw new Error("命令名为空！");
         return this.command;
+    }
+    public setPermission(permissionLv:number){
+        this.permissionLv = permissionLv
+        return this
     }
 }
 
