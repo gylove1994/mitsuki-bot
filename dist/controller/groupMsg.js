@@ -19,7 +19,7 @@ function groupMsg(context, mitsuki) {
                     const command = mitsuki.getCommand(context, mitsuki);
                     command.addCommand("mitsuki").addAction(() => {
                         let command = mitsuki.getCommand(context, mitsuki);
-                        command.addCommand("-v").addAction(() => { context.msg.reply("目前mitsuki的版本号是：0.0.1"); });
+                        command.addCommand("-v").addAction(() => { context.msg.reply("目前mitsuki的版本号是：0.1.0"); });
                         command.addCommand("-github").addAction(() => { context.msg.reply("mitsuki的开源仓库(快给我个star0.0)：https://github.com/gylove1994/mitsuki-bot"); });
                         command.addCommand("-help").addAction(() => { context.msg.reply("目前支持的命令：\nmitsuki -v 显示mitsuki的版本\nmitsuki -github 显示mitsuki的开源仓库地址\nmitsuki -p 显示权限信息\nmitsuki -d 显示介绍\nmitsuki -info 查询GY目前在干啥\nmitsuki -ec [msg] 发送紧急消息（需要有ec的权限）\nmitsuki -help 显示可用命令"); });
                         command.addCommand("-p").addAction(() => { context.msg.reply("您的权限为：" + context.getMiddlewareOutput("permissions").permissions); });
