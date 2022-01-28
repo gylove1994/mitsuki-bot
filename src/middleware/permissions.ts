@@ -1,3 +1,4 @@
+import { check } from 'mirai-ts';
 import { Mitsuki } from './../types/mitsuki';
 import fs from 'node:fs';
 import { Data, MsgType, MiddlewareOutput } from './../types/controller';
@@ -19,7 +20,7 @@ export function permissions<T extends MsgType>(msg: Data<T>,mitsuki:Mitsuki): Mi
     if (fs.existsSync(path.join(__dirname, "../config/permissions.json")))
         list = JSON.parse(fs.readFileSync(path.join(__dirname, "../config/permissions.json"), "utf-8"))
     else throw new Error("permissionList配置文件不存在")
-    if (msg.type == "FriendMessage"){
+    if (check.isChatMessage(msg)){
         for(let i = 0 ; i<list.admin.length ; i++){
             if(list.admin[i] == msg.sender.id)
             return {middlewareName:"permissions",output:{permissions:"admin",permissionLv:PermissionSet.admin}} as MiddlewareOutput
