@@ -3,11 +3,12 @@ import fs from 'node:fs';
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 import { Commands } from "./command";
-import { Controller, MsgType } from './controller';
+import { Context, Controller, MsgType } from './controller';
 
 export interface MitsukiSetting {
     apiSetting: MiraiApiHttpSetting
     qq_link: number
+    qq_bind:number
     dbPath?: string
 }
 
@@ -70,8 +71,8 @@ export class Mitsuki extends Mirai {
         this.controller.push(controller)
         return controller
     }
-    public getCommand(){
-        return new Commands()
+    public getCommand<T extends MsgType>(context:Context<T>,mitsuki:Mitsuki){
+        return new Commands<T>(context,mitsuki)
     }
     static async setup(mitsukiSettingPath: string,envPath?:string) {
         const mitsuki = new Mitsuki(mitsukiSettingPath,envPath)
